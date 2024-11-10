@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+
+<h1>Привет, кАтлет! {{ current_user.username }}</h1>
+
+    <H2>Главная</H2>
+
+Список из 3-х последних тренировок
+<br>
+<br>
+
+<br>
+
+    <div class="alert alert-info">
+        <h3>###</h3>
+        <br>
+        <h4>Разминка</h4>
+
+        <br>
+        <h4>Комплекс...</h4>
+</div>
+<br>
+
+{% endblock %}

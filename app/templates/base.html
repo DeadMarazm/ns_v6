@@ -1,0 +1,46 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+    {% if title %}{{ title }} - Нескучный Спорт{% else %}Добро пожаловать в Нескучный Спорт{% endif %}
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{{ url_for('user_bp.index') }}">Нескучный Спорт</a>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="#">Тренировки</a></li>
+                    <li><a href="#">Упражнения</a></li>
+                    <li><a href="#">Физ-ра_101</a></li>
+                    <li><a href="#">F.A.Q.</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('user_bp.profile') }}">Профиль</a></li>
+                        <li><a href="{{ url_for('security.logout') }}">Выйти</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('security.login') }}">Войти</a></li>
+                        <li><a href="{{ url_for('security.register') }}">Регистрация</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}
