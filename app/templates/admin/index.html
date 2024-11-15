@@ -1,18 +1,15 @@
 {% extends "admin/master.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block title %}
     Admin Dashboard
 {% endblock %}
 
-{% block content %}
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h2>Admin Dashboard</h2>
-            {% if current_user.has_role('admin') %}
-                <p>Welcome, Admin!</p>
-            {% else %}
-                <p>Access denied.</p>
-            {% endif %}
-        </div>
+{% block app_content %}
+    <div class="container text-center">
+        <h2>Welcome to the Admin Dashboard</h2>
+        {% if not current_user.is_authenticated or not current_user.has_role('admin') %}
+            <p><a href="{{ url_for('admin_bp.admin_login') }}" class="btn btn-primary">Админка</a></p>
+        {% endif %}
     </div>
 {% endblock %}

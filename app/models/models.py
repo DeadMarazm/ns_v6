@@ -1,6 +1,5 @@
 from app.extensions import db, bcrypt
 from flask_security import UserMixin, RoleMixin
-from werkzeug.security import generate_password_hash
 
 # Таблица связи между пользователями и ролями
 roles_users = db.Table('roles_users',
@@ -17,6 +16,7 @@ class Role(db.Model, RoleMixin):
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
@@ -28,15 +28,12 @@ class User(db.Model, UserMixin):
     def __init__(self, email, password, fs_uniquifier, **kwargs):
         super().__init__(**kwargs)
         self.email = email
-        self.password = generate_password_hash(password)
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
         self.fs_uniquifier = fs_uniquifier
         self.active = True
 
     def __repr__(self):
         return f'<User {self.username}>'
-
-    def set_password(self, password):
-        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password, password)

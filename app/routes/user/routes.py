@@ -1,6 +1,5 @@
 from flask import render_template, redirect, url_for
-from flask_security import login_user
-
+from flask_security import login_user, logout_user
 from app import db
 from app.forms.forms import RegistrationForm, LoginForm
 from app.models.models import User
@@ -17,20 +16,29 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user and user.verify_password(form.password.data):
+        if user and user.check_password(form.password.data):
             login_user(user)
-            return redirect(url_for('admin.index'))
+            return redirect(url_for('user_bp.index'))
     return render_template('security/login_user.html', form=form)
+
+
+@user_bp.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('user_bp.login'))
 
 
 @user_bp.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(email=form.email.data,
-                    password=form.password.data,
-                    fs_uniquifier=form.email.data)
+        user = User(
+            email=form.email.data,
+            password=form.password.data,
+            fs_uniquifier=form.email.data
+        )
         db.session.add(user)
         db.session.commit()
-        return redirect(url_for('user_bp.login'))
-    return render_template('security/register_user.html', form=form, title='Register')
+        login_user(user)
+        return redirect(url_for('user_bp.index'))
+    return render_template('security/register.html', form=form, title='Register')
